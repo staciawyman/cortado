@@ -27,22 +27,25 @@ The manifest can be created in Excel by the experimenter and then copied into a 
 
 The manifest text file is given as input to the convert_manifest.pl script which creates a shell script of cortado commands:
 
-`perl convert_manifest.pl [options] -f /path/to/fastq/files manifest.txt > manifest.sh`
+	`perl convert_manifest.pl [options] -f /path/to/fastq/files manifest.txt > manifest.sh`
 
 ### Default arguments:
 
 	window size [-w]: 3
 	number of threads [-t]: 24 
 
-The convert script will try and infer the location of cortado.py from your path, but it can also be given as a command-line argument. The pathe to the location of the amplicon sequencing fastq files should also be given as a command line argument.
+The convert script will try and infer the location of cortado.py from your path, but it can also be given as a command-line argument. 
 
 	cortado path: -c /path/to/cortado.py
+
+The path to the location of the amplicon sequencing fastq files should also be given as a command line argument (required).
+
 	fastq path: -f /path/to/fastq/files
 
 
 Then the manifest.sh file can be executed to run the cortado commands. I recommend "tmux" or "screen"  if you have a lot of samples.
 
-`sh manifest.sh`
+	`sh manifest.sh`
 
 
 
