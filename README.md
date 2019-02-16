@@ -45,7 +45,15 @@ The manifest text file is given as input to the convert_manifest.pl script which
 
 Then the manifest.sh file can be executed to run the cortado commands. I recommend "tmux" or "screen"  if you have a lot of samples.
 
-## OUTPUT: A summary file is produced with output for one sample per line.
+`sh manifest.sh`
 
-I usually copy the output_summary.txt file contents into the Excel manifest workbook to return to the experimenter. 
+## OUTPUT: 
+A summary file is produced with output for one sample per line. I usually copy the output_summary.txt file contents into the Excel manifest workbook to return to the experimenter. 
+
+## ERROR CHECKING:
+Sometimes there are errors in the input manifest. I've found the best way to check for these is to grep for "ERROR" in the log file:
+
+`grep -i err output/*/CR*`
+
+If you get no results from that command, then you're good. Some common errors include the guide not being found in the reference sequence or the donor sequence not being the same length as the reference sequence.
 
