@@ -2,7 +2,7 @@
 ## ABOUT
 Cortado is a reimplementation of CRISPResso https://github.com/lucapinello/CRISPResso (version 1.0.8) with the following primary changes:
 
--Takes as input a sample manifest (format below) from which a run of file of shell commands are created with a cortado run for each sample so that unlimited numbers of samples can be run.
+-Takes as input a sample manifest (format below) from which a run file of shell commands is created with a call to cortado for each sample so that unlimited numbers of samples can be run.
 
 -A summary of all samples in a run is created in one file with the following columns: 
 
