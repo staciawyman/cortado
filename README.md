@@ -23,10 +23,15 @@ Cortado is a reimplementation of CRISPResso https://github.com/lucapinello/CRISP
 -HDR is reported for each edited location in the donor, with the total based on an indicated primary edit site
 
 
-##REQUIREMENTS: Flash and Needle (part of EMBOSS) must be in your path to run cortado.
+## REQUIREMENTS: Flash and Needle (part of EMBOSS) must be in your path to run cortado.
 
-##USAGE: To use cortado, a sample manifest is first created with the following format:
+## USAGE: To use cortado, a sample manifest is first created with the following format:
+
+<CENTER>
 
 ![manifest](https://github.com/staciawyman/cortado/blob/master/manifest.png)
 
+</CENTER>
+
+## OUTPUT: A summary file is produced with output for one sample per line.
 
