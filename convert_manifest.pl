@@ -9,7 +9,7 @@ chomp($cortado_path);
 my $fastq_path = "/data/amplicon_fastqs";
 
 GetOptions ("t=i" => \$threads,    # numeric
-	    "window=i" => \$window_size,
+	    "w=i" => \$window_size,
             "c=s"   => \$cortado_path,
             "f=s"    => \$fastq_path)    
   or die("USAGE: perl convert_manifest.pl [options]  <manifest text file>\n");

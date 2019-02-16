@@ -25,21 +25,24 @@ The manifest can be created in Excel by the experimenter and then copied into a 
 
 The manifest text file is given as input to the convert_manifest.pl script which creates a shell script of cortado commands:
 
-`perl convert_manifest.pl manifest.txt > manifest.sh`
+`perl convert_manifest.pl [options] manifest.txt > manifest.sh`
+
+### Default arguments:
+
+-window size [-w]: 3
+-number of threads [-t]: 24 
 
 Then the manifest.sh file can be executed to run the cortado commands. I recommend "tmux" or "screen"  if you have a lot of samples.
 
 `sh manifest.sh`
 
-## DEFAULT ARGUMENTS:
-
--window size: 3
 
 
 ## OUTPUT: 
 A summary file is produced with output for one sample per line. I usually copy the output_summary.txt file contents into the Excel manifest workbook to return to the experimenter. 
 
 The output file has the following columns:
+
 	-Total reads
 	-Aligned reads
 	-PercentAligned	
