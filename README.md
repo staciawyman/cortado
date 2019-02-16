@@ -4,23 +4,7 @@ Cortado is a reimplementation of CRISPResso https://github.com/lucapinello/CRISP
 
 -Takes as input a sample manifest (format below) from which a run file of shell commands is created with a call to cortado for each sample so that unlimited numbers of samples can be run.
 
--A summary of all samples in a run is created in one file with the following columns: 
-
-	-Total reads
-	-Aligned reads
-	-PercentAligned	
-	-Unmodified reads	
-	-%Unmodified	
-	-CutsiteSubs	
-	-%CutsiteSubs	
-	-NHEJ-number of reads with insertion or deletion occurring withing 3bp to either side of cutsite (windowsize can be changed by user)	
-	-%NHEJ (NHEJ reads/aligned reads)
-	-MainSite-reads edited at the primary site	
-	-Main% (MainSite reads/aligned reads)	
-	-EditSiteN-number of reads with this site edited	
-	-Edit% (EditSiteN reads/aligned reads)	
-	-All_HDR_Pos-number of reads where all possible sites are edited	
-	-All_Edit% (All_HDR_Pos/aligned reads)
+-A summary of all samples in a run is created in one file with one sample per line.
 
 -HDR is reported for each edited location in the donor, with the total based on an indicated primary edit site
 
@@ -54,6 +38,23 @@ Then the manifest.sh file can be executed to run the cortado commands. I recomme
 
 ## OUTPUT: 
 A summary file is produced with output for one sample per line. I usually copy the output_summary.txt file contents into the Excel manifest workbook to return to the experimenter. 
+
+The output file has the following columns:
+	-Total reads
+	-Aligned reads
+	-PercentAligned	
+	-Unmodified reads	
+	-%Unmodified	
+	-CutsiteSubs	
+	-%CutsiteSubs	
+	-NHEJ-number of reads with insertion or deletion occurring withing 3bp to either side of cutsite (windowsize can be changed by user)	
+	-%NHEJ (NHEJ reads/aligned reads)
+	-MainSite-reads edited at the primary site	
+	-Main% (MainSite reads/aligned reads)	
+	-EditSiteN-number of reads with this site edited	
+	-Edit% (EditSiteN reads/aligned reads)	
+	-All_HDR_Pos-number of reads where all possible sites are edited	
+	-All_Edit% (All_HDR_Pos/aligned reads)
 
 ## ERROR CHECKING:
 Sometimes there are errors in the input manifest. I've found the best way to check for these is to grep for "ERROR" in the log file:
