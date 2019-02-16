@@ -29,8 +29,8 @@ The manifest text file is given as input to the convert_manifest.pl script which
 
 ### Default arguments:
 
-	-window size [-w]: 3
-	-number of threads [-t]: 24 
+	window size [-w]: 3
+	number of threads [-t]: 24 
 
 Then the manifest.sh file can be executed to run the cortado commands. I recommend "tmux" or "screen"  if you have a lot of samples.
 
