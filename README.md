@@ -3,6 +3,7 @@ Cortado is a reimplementation of CRISPResso https://github.com/lucapinello/CRISP
 -Takes as input a sample manifest (format below) from which a run of file of shell commands are created with a cortado run for each sample so that unlimited numbers of samples can be run.
 
 -A summary of all samples in a run is created in one file with the following columns: 
+
 	-Total reads
 	-Aligned reads
 	-PercentAligned	
@@ -22,7 +23,7 @@ Cortado is a reimplementation of CRISPResso https://github.com/lucapinello/CRISP
 -HDR is reported for each edited location in the donor, with the total based on an indicated primary edit site
 
 
-REQUIREMENTS: Flash and Needle (part of EMBOSS) must be in your path to run cortado.
-USAGE: To use cortado, a sample manifest is first created with the following format:
+##REQUIREMENTS: Flash and Needle (part of EMBOSS) must be in your path to run cortado.
+##USAGE: To use cortado, a sample manifest is first created with the following format:
 
-... image:: https://github.com/staciawyman/cortado/blob/master/manifest.png
+![manifest](https://github.com/staciawyman/cortado/blob/master/manifest.png)
