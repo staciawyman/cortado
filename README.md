@@ -71,7 +71,7 @@ The output file has the following columns:
 	-All_Edit% (All_HDR_Pos/aligned reads)
 
 ## ERROR CHECKING:
-Sometimes there are errors in the input manifest. I've found the best way to check for these is to grep for "ERROR" in the log file:
+Sometimes there are errors in the input manifest and it causes of one of the instances of cortado to fail. I've found the best way to check for these is to grep for "ERROR" in the log file:
 
 `grep -i err output/*/CR*`
 
