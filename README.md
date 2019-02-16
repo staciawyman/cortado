@@ -1,3 +1,5 @@
+# **Cortado**
+## ABOUT
 Cortado is a reimplementation of CRISPResso https://github.com/lucapinello/CRISPResso (version 1.0.8) with the following primary changes:
 
 -Takes as input a sample manifest (format below) from which a run of file of shell commands are created with a cortado run for each sample so that unlimited numbers of samples can be run.
@@ -35,5 +37,15 @@ To use cortado, a sample manifest is first created with the following format:
 
 </CENTER>
 
+The manifest can be created in Excel by the experimenter and then copied into a text file in the directory where the editing outcomes will be analyzed. 
+
+The manifest text file is given as input to the convert_manifest.pl script which creates a shell script of cortado commands:
+
+`perl convert_manifest.pl manifest.txt > manifest.sh`
+
+Then the manifest.sh file can be executed to run the cortado commands. I recommend "tmux" or "screen"  if you have a lot of samples.
+
 ## OUTPUT: A summary file is produced with output for one sample per line.
+
+I usually copy the output_summary.txt file contents into the Excel manifest workbook to return to the experimenter. 
 
