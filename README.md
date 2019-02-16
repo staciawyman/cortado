@@ -24,6 +24,9 @@ Cortado is a reimplementation of CRISPResso https://github.com/lucapinello/CRISP
 
 
 ##REQUIREMENTS: Flash and Needle (part of EMBOSS) must be in your path to run cortado.
+
 ##USAGE: To use cortado, a sample manifest is first created with the following format:
 
 ![manifest](https://github.com/staciawyman/cortado/blob/master/manifest.png)
+
+
