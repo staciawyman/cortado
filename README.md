@@ -36,8 +36,8 @@ The manifest text file is given as input to the convert_manifest.pl script which
 
 The convert script will try and infer the location of cortado.py from your path, but it can also be given as a command-line argument. The pathe to the location of the amplicon sequencing fastq files should also be given as a command line argument.
 
-	cortado path [-p /path/to/cortado.py]
-	fastq path [-f /path/to/fastq/files]
+	cortado path: -c /path/to/cortado.py
+	fastq path: -f /path/to/fastq/files
 
 
 Then the manifest.sh file can be executed to run the cortado commands. I recommend "tmux" or "screen"  if you have a lot of samples.
