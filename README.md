@@ -47,6 +47,11 @@ Then the manifest.sh file can be executed to run the cortado commands. I recomme
 
 `sh manifest.sh`
 
+## DEFAULT ARGUMENTS:
+
+-window size: 3
+
+
 ## OUTPUT: 
 A summary file is produced with output for one sample per line. I usually copy the output_summary.txt file contents into the Excel manifest workbook to return to the experimenter. 
 
