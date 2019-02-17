@@ -8,17 +8,21 @@ Cortado is a reimplementation of CRISPResso https://github.com/lucapinello/CRISP
 
 -HDR is reported for each edited location in the donor, with the total based on an indicated primary edit site
 
+-A read is counted as an HDR read if the exact nucleotide change indicated in the donor sequence is acheived.
+
+Cortado has much of the same functionality as CRISPResso, but some functionality was lost in streamlining to implement our scroring scheme.  Command line options of CRISPResso can be modified in the perl script and others can be added, though they are not gauranteed to work with cortado.
+
 
 ## INSTALLATION REQUIREMENTS: 
 Flash and Needle (part of EMBOSS) must be in your path to run cortado.
 
-	Flash: http://ccb.jhu.edu/software/FLASH/
-	Needle from the EMBOSS suite: ftp://emboss.open-bio.org/pub/EMBOSS/
+Flash: http://ccb.jhu.edu/software/FLASH/
+Needle from the EMBOSS suite: ftp://emboss.open-bio.org/pub/EMBOSS/
 
 64-bit Linux executables are included in the bin directory and may work for you. Be sure to include both 
 the cortado directory and bin subdirectory to your path to use these.
 
-Cortado runs with Python versions 2.7.5 and has not beed tested with others. To temporarily set your version to 2.7, create a virtual environment to run cortado:
+Cortado runs with Python version 2.7.5 and has not beed tested with others. To temporarily set your version to 2.7, create a virtual environment to run cortado:
 
 	$ conda create -n py27 python=2.7 anaconda
 
