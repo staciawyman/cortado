@@ -48,7 +48,7 @@ def check_library(library_name):
         try:
                 return __import__(library_name)
         except:
-                error('You need to install %s module to use CRISPResso!' % library_name)
+                error('You need to install %s module to use cortado.' % library_name)
                 sys.exit(1)
 
 def which(program):
@@ -71,7 +71,7 @@ def which(program):
 
 def check_program(binary_name,download_url=None):
         if not which(binary_name):
-                error('You need to install and have the command #####%s##### in your PATH variable to use CRISPResso!\n Please read the documentation!' % binary_name)
+                error('You need to install and have the command #####%s##### in your PATH variable to use cortado!\n Please read the documentation!' % binary_name)
                 if download_url:
                         error('You can download it from here:%s' % download_url)
                 sys.exit(1)
@@ -791,13 +791,13 @@ def main():
              global_sub_count = 0
              seq_error = 0 
              partial_correction = 0 
-             parser = argparse.ArgumentParser(description='CRISPResso Parameters',formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+             parser = argparse.ArgumentParser(description='cortado parameters',formatter_class=argparse.ArgumentDefaultsHelpFormatter)
              parser.add_argument('-r1','--fastq_r1', type=str,  help='First fastq file', required=True,default='Fastq filename' )
              parser.add_argument('-r2','--fastq_r2', type=str,  help='Second fastq file for paired end reads',default='')
              parser.add_argument('-a','--amplicon_seq', type=str,  help='Amplicon Sequence', required=True)
 
              #optional
-             parser.add_argument('-g','--guide_seq',  help="sgRNA sequence, if more than one, please separate by comma/s. Note that the sgRNA needs to be input as the guide RNA sequence (usually 20 nt) immediately adjacent to but not including the PAM sequence (5' of NGG for SpCas9). If the PAM is found on the opposite strand with respect to the Amplicon Sequence, ensure the sgRNA sequence is also found on the opposite strand. The CRISPResso convention is to depict the expected cleavage position using the value of the parameter cleavage_offset nt  3' from the end of the guide. In addition, the use of alternate nucleases to SpCas9 is supported. For example, if using the Cpf1 system, enter the sequence (usually 20 nt) immediately 3' of the PAM sequence and explicitly set the cleavage_offset parameter to 1, since the default setting of -3 is suitable only for SpCas9.", default='')
+             parser.add_argument('-g','--guide_seq',  help="sgRNA sequence, if more than one, please separate by comma/s. Note that the sgRNA needs to be input as the guide RNA sequence (usually 20 nt) immediately adjacent to but not including the PAM sequence (5' of NGG for SpCas9). If the PAM is found on the opposite strand with respect to the Amplicon Sequence, ensure the sgRNA sequence is also found on the opposite strand. The cortado convention is to depict the expected cleavage position using the value of the parameter cleavage_offset nt  3' from the end of the guide. In addition, the use of alternate nucleases to SpCas9 is supported. For example, if using the Cpf1 system, enter the sequence (usually 20 nt) immediately 3' of the PAM sequence and explicitly set the cleavage_offset parameter to 1, since the default setting of -3 is suitable only for SpCas9.", default='')
              parser.add_argument('-e','--expected_hdr_amplicon_seq',  help='Amplicon sequence expected after hdr', default='')
              parser.add_argument('-d','--donor_seq',  help='Donor Sequence. This optional input comprises a subsequence of the expected hdr amplicon to be highlighted in plots.', default='')
              parser.add_argument('-c','--coding_seq',  help='Subsequence/s of the amplicon sequence covering one or more coding sequences for the frameshift analysis.If more than one (for example, split by intron/s), please separate by comma.', default='')
@@ -990,7 +990,7 @@ def main():
                      OUTPUT_DIRECTORY=os.path.join(os.path.abspath(args.output_folder),OUTPUT_DIRECTORY)
 
              _jp=lambda filename: os.path.join(OUTPUT_DIRECTORY,filename) #handy function to put a file in the output directory
-             log_filename=_jp('CRISPResso_RUNNING_LOG.txt')
+             log_filename=_jp('cortado_running_log.txt')
 
              try:
                      os.makedirs(OUTPUT_DIRECTORY)
@@ -1002,7 +1002,7 @@ def main():
              finally:
                      logging.getLogger().addHandler(logging.FileHandler(log_filename))
                      with open(log_filename,'w+') as outfile:
-                         outfile.write('[Command used]:\nCRISPResso %s\n\n[Execution log]:\n' % ' '.join(sys.argv))
+                         outfile.write('[Command used]:\ncortado %s\n\n[Execution log]:\n' % ' '.join(sys.argv))
 
              filename=os.path.join(os.path.abspath(args.output_folder),args.name,'hdr_reads.txt')
              fh_hdr = open(filename,"w")
