@@ -99,6 +99,8 @@ The output file has the following columns:
 
 Running manifest.sh also creates a directory called "output" where the cortado output files for each run are placed for each sample in its own directory. Here you can find many helpful file if a sample failed to run. You can also find a pdf image of the aligned alleles with indels and SNPs marked. This is called "9.Alleles_around_cut_site_for_<sample_name>.pdf." Note that there is a bug in this representation that shows the allele from the forward read alignment and reverse read alignment (of the same allele) separately. The abundance should be summed for these two.
 
+![sample_output](https://github.com/staciawyman/cortado/blob/master/sample_output.png)
+
 ## ERROR CHECKING:
 Sometimes there are errors in the input manifest and it causes of one of the instances of cortado to fail. I've found the best way to check for these is to grep for "ERROR" in the log file:
 
