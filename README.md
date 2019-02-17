@@ -20,21 +20,23 @@ the cortado directory and bin subdirectory to your path to use these.
 
 Cortado runs with Python versions 2.7.5 and has not beed tested with others. To temporarily set your version to 2.7, create a virtual environment to run cortado:
 
-	`$ conda create -n py27 python=2.7 anaconda`
+	$ conda create -n py27 python=2.7 anaconda
 
 This will prompt you to install many packages for this version of python. Then to start the virtual environment, making python2.7 your default version:
 
-	`$ source activate py27`
+	$ source activate py27
 
 To deactivate:
 
-	`$ source deactivate`
+	$ source deactivate
 
 (logging out will also deactivate your virtual environment)
 The following Python libraries must also be installed: pandas,numpy,matplotlib,pylab,Bio,seaborn
 
 ## USAGE: 
-To use cortado, a sample manifest is first created with the following format:
+Cortado takes as input a sample manifest that has sample, reference and donor sequence, and guide information for each sample. The sequencing fastq files should all be in one directory (and given as an argument to the convert script). These should be 300bp paired-end sequencing reads.
+
+A sample manifest is created by the experimenter (that edited the samples) with the following format:
 
 <CENTER>
 
@@ -52,6 +54,8 @@ The manifest text file is given as input to the convert_manifest.pl script which
 
 	window size [-w]: 3
 	number of threads [-t]: 24 
+
+The number of threads is how many simultaneous versions of cortado will run at a time in batches. 
 
 The convert script will try and infer the location of cortado.py from your path, but it can also be given as a command-line argument. 
 
