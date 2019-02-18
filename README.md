@@ -17,6 +17,7 @@ Cortado has much of the same functionality as CRISPResso, but some functionality
 Flash and Needle (part of EMBOSS) must be in your path to run cortado.
 
 Flash: http://ccb.jhu.edu/software/FLASH/
+
 Needle from the EMBOSS suite: ftp://emboss.open-bio.org/pub/EMBOSS/
 
 64-bit Linux executables are included in the bin directory and may work for you. Be sure to include both 
