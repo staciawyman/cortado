@@ -2,14 +2,14 @@
 # -*- coding: utf8 -*-
 
 '''
-cortado: a reimplementation of CRISPResso
-CRISPResso - Luca Pinello 2015
+cortado __version__ = "1.0" 
+https://github.com/staciawyman/cortado
+cortado is a reimplementation of CRISPResso https://github.com/lucapinello/CRISPResso
+From CRISPResso  Luca Pinello 2015 version 1.0.8
 Software pipeline for the analysis of CRISPR-Cas9 genome editing outcomes from deep sequencing data
-https://github.com/lucapinello/CRISPResso
 '''
 
 
-__version__ = "1.0.8"
 
 import sys
 import errno
