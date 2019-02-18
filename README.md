@@ -18,7 +18,7 @@ Flash and Needle (part of EMBOSS) must be in your path to run cortado.
 
 Flash: http://ccb.jhu.edu/software/FLASH/
 
-Needle from the EMBOSS suite: ftp://emboss.open-bio.org/pub/EMBOSS/
+Needle from the EMBOSS suite: ftp://emboss.open-bio.org/pub/EMBOSS/EMBOSS-6.5.7.tar.gz
 
 64-bit Linux executables are included in the bin directory and may work for you. Be sure to include both 
 the cortado directory and bin subdirectory to your path to use these.
