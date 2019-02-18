@@ -51,27 +51,24 @@ A sample manifest is created by the experimenter (that edited the samples) with 
 
 The manifest can be created in Excel by the experimenter and then copied into a text file in the directory where the editing outcomes will be analyzed. 
 
-The manifest text file is given as input to the convert_manifest.pl script which creates a shell script of cortado commands:
+The manifest text file is given as input to the convert_manifest.pl script which creates a shell script of cortado commands. If you keep all your fastq files in the same directory, you can set that in the script, but otherwise you can add it to the command line.
 
-	`perl convert_manifest.pl [options] -f /path/to/fastq/files manifest.txt > manifest.sh`
+	`perl convert_manifest.pl [options] manifest.txt > manifest.sh`
 
-### Default arguments:
+###	OPTIONS:
 
-	window size [-w]: 3
-	number of threads [-t]: 24 
+	-t int	Number of threads to use (runs in batches), default 24
+
+	-w int	Window size around cut site within which to check for indels, default 3 (on each side of cut site)
+
+	-f /path/to/fastqs
+
+	-c /path/to/cortado/dir
+
 
 The number of threads is how many simultaneous versions of cortado will run at a time in batches. 
-
 The convert script will try and infer the location of cortado.py from your path, but it can also be given as a command-line argument. 
-
-	cortado path: -c /path/to/cortado.py
-
-The path to the location of the amplicon sequencing fastq files should also be given as a command line argument (required).
-
-	fastq path: -f /path/to/fastq/files
-
-
-Then the manifest.sh file can be executed to run the cortado commands. I recommend "tmux" or "screen"  if you have a lot of samples.
+Then the manifest.sh file is executed to run the cortado commands. I recommend running under "tmux" or "screen"  if you have a lot of samples.
 
 	`sh manifest.sh`
 
