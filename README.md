@@ -61,6 +61,7 @@ The manifest text file is given as input to the convert_manifest.pl script which
 	-w int	Window size around cut site within which to check for indels, default 3 (on each side of cut site)
 	-f /path/to/fastqs
 	-c /path/to/cortado/dir
+	-h 	Print help message
 
 
 The number of threads is how many simultaneous versions of cortado will run at a time in batches. 

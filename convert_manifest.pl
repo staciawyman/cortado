@@ -24,7 +24,9 @@ GetOptions ("t=i" => \$threads,    # numeric
 
 if ($help || !@ARGV) {
     print "USAGE: perl convert_manifest.pl [options] <manifest text file>\n";
-    print "\tOPTIONS:\n\t-t int\tNumber of threads to use (runs in batches)\n";
+    print "\tOPTIONS:\n";
+    print "\t-h\tThis message\n";
+    print "\t-t int\tNumber of threads to use (runs in batches)\n";
     print "\t-w int\tWindow size around cut site within which to check for indels\n";
     print "\t-f /path/to/fastqs\n\t-c /path/to/cortado/dir \n";
     exit;
