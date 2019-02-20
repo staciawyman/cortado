@@ -28,7 +28,7 @@ if ($help || !@ARGV) {
     print "\t-h\tThis message\n";
     print "\t-t int\tNumber of threads to use (runs in batches)\n";
     print "\t-w int\tWindow size around cut site within which to check for indels\n";
-    print "\t-f /path/to/fastqs\n\t-c /path/to/cortado/dir \n";
+    print "\t-f /path/to/fastq/dir\n\t-c /path/to/cortado.py \n";
     exit;
 }
 
@@ -52,7 +52,7 @@ while (<>) {
     
     $samp .= "_";
     if ($donorseq eq "-") { # Run as just NHEJ
-        print "/usr/bin/python $cortado_path -r1 $fastq_path/$samp\*R1_001.fastq.gz -r2 $fastq_path/$samp\*R2_001.fastq.gz -o output -n $name -a $refseq -g $guideseq --trim_sequences --trimmomatic_options_string ILLUMINACLIP:/data/applications/Trimmomatic-0.36/adapters/adapters.fa:2:30:10 --keep_intermediate  --min_identity_score 58 --window_around_sgrna $window_size  --min_frequency_alleles_around_cut_to_plot 0.1 --max_rows_alleles_around_cut_to_plot 250";
+        print "/usr/bin/python $cortado_path -r1 $fastq_path/$samp\*R1_001.fastq.gz -r2 $fastq_path/$samp\*R2_001.fastq.gz -o output -n $name -a $refseq -g $guideseq --trim_sequences --trimmomatic_options_string ILLUMINACLIP:adapters.fa:2:30:10 --keep_intermediate  --min_identity_score 58 --window_around_sgrna $window_size  --min_frequency_alleles_around_cut_to_plot 0.1 --max_rows_alleles_around_cut_to_plot 250";
 	if ($count < $threads) {
 		print " & \n";
 		$count++
@@ -61,7 +61,7 @@ while (<>) {
 		$count = 0;
 	}
     } else { # Run as HDR
-        print "/usr/bin/python $cortado_path -r1 $fastq_path/$samp\*R1_001.fastq.gz -r2 $fastq_path/$samp\*R2_001.fastq.gz -o output -n $name -a $refseq -e $donorseq -g $guideseq --trim_sequences --trimmomatic_options_string ILLUMINACLIP:/data/applications/Trimmomatic-0.36/adapters/adapters.fa:2:30:10 --keep_intermediate --all_edits --main_site $main_site --min_identity_score 58 --window_around_sgrna $window_size --min_frequency_alleles_around_cut_to_plot 0.1 --max_rows_alleles_around_cut_to_plot 250 ";
+        print "/usr/bin/python $cortado_path -r1 $fastq_path/$samp\*R1_001.fastq.gz -r2 $fastq_path/$samp\*R2_001.fastq.gz -o output -n $name -a $refseq -e $donorseq -g $guideseq --trim_sequences --trimmomatic_options_string ILLUMINACLIP:adapters.fa:2:30:10 --keep_intermediate --all_edits --main_site $main_site --min_identity_score 58 --window_around_sgrna $window_size --min_frequency_alleles_around_cut_to_plot 0.1 --max_rows_alleles_around_cut_to_plot 250 ";
 	if ($count < $threads) {
 		print " & \n";
 		$count++
