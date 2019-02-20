@@ -36,7 +36,8 @@ To deactivate:
 	$ source deactivate
 
 (logging out will also deactivate your virtual environment)
-The following Python libraries must also be installed: pandas,numpy,matplotlib,pylab,Bio,seaborn
+
+The following Python libraries must also be installed: pandas, numpy, matplotlib, pylab, Bio, seaborn
 
 ## USAGE: 
 Cortado takes as input a sample manifest that has sample, reference and donor sequence, and guide information for each sample. The sequencing fastq files should all be in one directory (and given as an argument to the convert script). These should be 300bp paired-end sequencing reads.

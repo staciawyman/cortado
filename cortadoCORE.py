@@ -764,6 +764,7 @@ def main():
     try:
              print '  \n~~~cortado~~~'
              print '-Analysis of CRISPR/Cas9 outcomes from deep sequencing data-'
+             print 'Reimplemented from CRISPResso Version 1.0.8\n'
              print'''
                       ))
                      ((
@@ -773,9 +774,9 @@ def main():
                     \___/
              '''
              #print'\n[Luca Pinello 2015, send bugs, suggestions or *green coffee* to lucapinello AT gmail DOT com]\n\n',
-             print 'Reimplemented from CRISPResso Version %s\n' % __version__
 
              #global variables for the multiprocessing
+
              global args
              global include_idxs
              global len_amplicon
