@@ -1842,8 +1842,7 @@ def main():
 
 
              lgd=plt.legend(loc='center', bbox_to_anchor=(0.5, -0.23),ncol=1, fancybox=True, shadow=True)
-             info('HERE 1 3 done...')
-             y_label_values=np.arange(0,y_max,y_max/6.0)
+             y_label_values=np.arange(0,y_max,max(y_max/6.0,1)) # SKW fix div by 0 rounding bug
              plt.yticks(y_label_values,['%.1f%% (%d)' % (n_reads/float(N_ALIGNED)*100, n_reads) for n_reads in y_label_values])
              plt.xticks(np.arange(0,len_amplicon,max(3,(len_amplicon/6) - (len_amplicon/6)%5)).astype(int) )
 
@@ -1888,7 +1887,7 @@ def main():
                  #       plt.plot([sgRNA_int[0],sgRNA_int[1]],[0,0],lw=10,c=(0,0,0,0.15),label='_nolegend_',solid_capstyle='butt')
 
              lgd=plt.legend(loc='center', bbox_to_anchor=(0.5, -0.28),ncol=1, fancybox=True, shadow=True)
-             y_label_values=np.arange(0,y_max,y_max/6.0)
+             y_label_values=np.arange(0,y_max,max(y_max/6.0,1)) #SKW fix div 0 rounding error
              plt.yticks(y_label_values,['%.1f%% (%.1f%% , %d)' % (n_reads/float(N_ALIGNED)*100,n_reads/float(N_INDELS)*100, n_reads) for n_reads in y_label_values])
              plt.xticks(np.arange(0,len_amplicon,max(3,(len_amplicon/6) - (len_amplicon/6)%5)).astype(int) )
 
@@ -1935,7 +1934,7 @@ def main():
 
 
                  lgd=plt.legend(loc='center', bbox_to_anchor=(0.5, -0.28),ncol=1, fancybox=True, shadow=True)
-                 y_label_values=np.arange(0,y_max,y_max/6).astype(int)
+                 y_label_values=np.arange(0,y_max,max(y_max/6,1)).astype(int) #SKW fix div 0 rounding error
                  plt.yticks(y_label_values,['%.1f%% (%.1f%% , %d)' % (n_reads/float(N_ALIGNED)*100,n_reads/float(N_REPAIRED)*100, n_reads) for n_reads in y_label_values])
                  plt.xticks(np.arange(0,len_amplicon,max(3,(len_amplicon/6) - (len_amplicon/6)%5)).astype(int) )
 
