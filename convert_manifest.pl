@@ -10,7 +10,7 @@ my $window_size = 6;
 my $cortado_path = `which cortado.py`;
 chomp($cortado_path);
 
-# Set default fastq fil path here, or give as command line argument
+# Set default fastq file path here, or give as command line argument
 my $fastq_path = "/data/amplicon_fastqs";
 
 GetOptions ("t=i" => \$threads,    # numeric
@@ -40,19 +40,18 @@ while (<>) {
     my ($samp,$ref,$refseq,$donorseq,$main_site,$guideseq) = split(/\t/);
     my $name = $samp."_".$ref;
 
-    if (length($refseq) != length($donorseq)) { die("Sample $name: reference and donor sequences must be same length."); }
     $guideseq = uc($guideseq);
     $refseq = uc($refseq);
     if ($refseq !~ /$guideseq/) {
 	my $rc = revcomp($refseq);
 	if ($rc !~ /$guideseq/) {
-	    die ("Sample $name: reference sequence must contain guide sequnce.");
+	    die ("Sample $name: reference sequence must contain guide sequnce.\n");
 	}
     }
     
     $samp .= "_";
     if ($donorseq eq "-") { # Run as just NHEJ
-        print "/usr/bin/python $cortado_path -r1 $fastq_path/$samp\*R1_001.fastq.gz -r2 $fastq_path/$samp\*R2_001.fastq.gz -o output -n $name -a $refseq -g $guideseq --trim_sequences --trimmomatic_options_string ILLUMINACLIP:adapters.fa:2:30:10 --keep_intermediate  --min_identity_score 58 --window_around_sgrna $window_size  --min_frequency_alleles_around_cut_to_plot 0.1 --max_rows_alleles_around_cut_to_plot 250";
+        print "/usr/bin/python $cortado_path -r1 $fastq_path/$samp\*R1_001.fastq.gz -r2 $fastq_path/$samp\*R2_001.fastq.gz -o output -n $name -a $refseq -g $guideseq --trim_sequences  --keep_intermediate  --min_identity_score 58 --window_around_sgrna $window_size  --min_frequency_alleles_around_cut_to_plot 0.1 --max_rows_alleles_around_cut_to_plot 250";
 	if ($count < $threads) {
 		print " & \n";
 		$count++
@@ -61,7 +60,10 @@ while (<>) {
 		$count = 0;
 	}
     } else { # Run as HDR
-        print "/usr/bin/python $cortado_path -r1 $fastq_path/$samp\*R1_001.fastq.gz -r2 $fastq_path/$samp\*R2_001.fastq.gz -o output -n $name -a $refseq -e $donorseq -g $guideseq --trim_sequences --trimmomatic_options_string ILLUMINACLIP:adapters.fa:2:30:10 --keep_intermediate --all_edits --main_site $main_site --min_identity_score 58 --window_around_sgrna $window_size --min_frequency_alleles_around_cut_to_plot 0.1 --max_rows_alleles_around_cut_to_plot 250 ";
+        if (length($refseq) != length($donorseq)) { 
+		die("Sample $name: reference and donor sequences must be same length."); 
+	}
+        print "/usr/bin/python $cortado_path -r1 $fastq_path/$samp\*R1_001.fastq.gz -r2 $fastq_path/$samp\*R2_001.fastq.gz -o output -n $name -a $refseq -e $donorseq -g $guideseq --trim_sequences --keep_intermediate --all_edits --main_site $main_site --min_identity_score 58 --window_around_sgrna $window_size --min_frequency_alleles_around_cut_to_plot 0.1 --max_rows_alleles_around_cut_to_plot 250 ";
 	if ($count < $threads) {
 		print " & \n";
 		$count++
