@@ -1127,8 +1127,8 @@ def main():
                  #count reads
                  N_READS_INPUT=get_n_reads_fastq(args.fastq_r1)
                  N_READS_AFTER_PREPROCESSING=get_n_reads_fastq(processed_output_filename)
-                 if N_READS_AFTER_PREPROCESSING == 0:
-                     raise NoReadsAfterQualityFiltering('No reads in input or no reads survived the average or single bp quality filtering.')
+                 if N_READS_AFTER_PREPROCESSING < 1000:			#SKW less than 1K, no sensitivity
+                     raise NoReadsAfterQualityFiltering('NOT ENOUGH READS: Less than 1K reads in input (or that survived quality filtering).')
                  #write statistics
                  #with open(_jp('Mapping_statistics.txt'),'w+') as outfile:
                  #    outfile.write('READS IN INPUTS:%d\nREADS AFTER PREPROCESSING:%d\nREADS ALIGNED:%d' % (N_READS_INPUT,N_READS_AFTER_PREPROCESSING,N_ALIGNED))
