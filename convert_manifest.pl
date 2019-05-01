@@ -51,7 +51,7 @@ while (<>) {
     
     $samp .= "_";
     if ($donorseq eq "-") { # Run as just NHEJ
-        print "/usr/bin/python $cortado_path -r1 $fastq_path/$samp\*R1_001.fastq.gz -r2 $fastq_path/$samp\*R2_001.fastq.gz -o output -n $name -a $refseq -g $guideseq --trim_sequences  --keep_intermediate  --min_identity_score 58 --window_around_sgrna $window_size  --min_frequency_alleles_around_cut_to_plot 0.1 --max_rows_alleles_around_cut_to_plot 250";
+        print "/usr/bin/python $cortado_path -r1 $fastq_path/$samp\*R1\*.fastq.gz -r2 $fastq_path/$samp\*R2\*.fastq.gz -o output -n $name -a $refseq -g $guideseq --trim_sequences  --keep_intermediate  --min_identity_score 58 --window_around_sgrna $window_size  --min_frequency_alleles_around_cut_to_plot 0.1 --max_rows_alleles_around_cut_to_plot 250";
 	if ($count < $threads) {
 		print " & \n";
 		$count++
@@ -63,7 +63,7 @@ while (<>) {
         if (length($refseq) != length($donorseq)) { 
 		die("Sample $name: reference and donor sequences must be same length."); 
 	}
-        print "/usr/bin/python $cortado_path -r1 $fastq_path/$samp\*R1_001.fastq.gz -r2 $fastq_path/$samp\*R2_001.fastq.gz -o output -n $name -a $refseq -e $donorseq -g $guideseq --trim_sequences --keep_intermediate --all_edits --main_site $main_site --min_identity_score 58 --window_around_sgrna $window_size --min_frequency_alleles_around_cut_to_plot 0.1 --max_rows_alleles_around_cut_to_plot 250 ";
+        print "/usr/bin/python $cortado_path -r1 $fastq_path/$samp\*R1\*.fastq.gz -r2 $fastq_path/$samp\*R2\*.fastq.gz -o output -n $name -a $refseq -e $donorseq -g $guideseq --trim_sequences --keep_intermediate --all_edits --main_site $main_site --min_identity_score 58 --window_around_sgrna $window_size --min_frequency_alleles_around_cut_to_plot 0.1 --max_rows_alleles_around_cut_to_plot 250 ";
 	if ($count < $threads) {
 		print " & \n";
 		$count++

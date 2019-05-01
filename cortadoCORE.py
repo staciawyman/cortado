@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 # -*- coding: utf8 -*-
 
 '''
@@ -645,7 +646,7 @@ def plot_alleles_table(offset_to_plot,reference_seq,cut_point,df_alleles,sgRNA_n
 # START FIG 9
     offset_around_cut_to_plot=offset_to_plot
 
-    print('Printing offset of %d' % offset_around_cut_to_plot)
+    info('Printing offset of %d' % offset_around_cut_to_plot)
 
     # make a color map of fixed colors
     alpha=0.5
@@ -1088,7 +1089,7 @@ def main():
                                  args.fastq_r1,args.fastq_r2,output_forward_paired_filename,
                                  output_forward_unpaired_filename,output_reverse_paired_filename,
                                  output_reverse_unpaired_filename,args.trimmomatic_options_string,log_filename)
-                         print cmd
+                         info(cmd)
                          TRIMMOMATIC_STATUS=sb.call(cmd,shell=True)
                          if TRIMMOMATIC_STATUS:
                                  raise TrimmomaticException('TRIMMOMATIC failed to run, please check the log file.')
@@ -1371,9 +1372,9 @@ def main():
 
              N_ALIGNED=df_needle_alignment.shape[0]*1.0
 
-             if N_ALIGNED==0:
-                 raise NoReadsAlignedException('ZERO sequences aligned, please check your amplicon sequence')
-                 error('Zero sequences aligned')
+             if N_ALIGNED < 10:
+                 raise NoReadsAlignedException('Almost no sequences aligned, please check your amplicon sequence')
+                 error('No sequences aligned')
 
              #remove the mutations in bp equal to 'N'
              if 'N' in args.amplicon_seq:
@@ -1584,21 +1585,19 @@ def main():
              #df_alleles.set_index('Aligned_Sequence',inplace=True)
              df_alleles['%Reads']=df_alleles['#Reads']/df_alleles['#Reads'].sum()*100
 
-             print('==>Done1')
              if np.sum(np.array(map(int,pd.__version__.split('.')))*(100,10,1))< 170:
                 df_alleles.sort('#Reads',ascending=False,inplace=True)
              else:
                 df_alleles.sort_values(by='#Reads',ascending=False,inplace=True)
-             print('==>Done2')
 
              
              #add ref positions for the plot around the cut sites
              df_needle_alignment.set_index(['align_seq','ref_seq'],inplace=True)
-             print('==>Done3')
              df_needle_alignment.sort_index(inplace=True)
-             print('==>Done4')
+	     #import pdb; pdb.set_trace()
+             #df_alleles.head(100).to_csv('df_alleles.csv')
+             #df_needle_alignment.head(100).to_csv('df_needle_alignment.csv')
              df_alleles['ref_positions']=df_alleles.apply(lambda x: get_ref_positions(x,df_needle_alignment),axis=1).values
-             print('==>Done5')
 
              print('==>Done.')
 
@@ -1976,7 +1975,7 @@ def main():
                                 plt.plot([sgRNA_int[0],sgRNA_int[1]],[0,0],lw=10,c=(0,0,0,0.15),label='_nolegend_',solid_capstyle='butt')
 
                  lgd=plt.legend(loc='center', bbox_to_anchor=(0.5, -0.28),ncol=1, fancybox=True, shadow=True)
-                 y_label_values= np.round(np.linspace(0, min(N_ALIGNED,max(ax.get_yticks())),6))# np.arange(0,y_max,y_max/6.0)
+                 y_label_values=np.arange(0,y_max,max(y_max/6.0,1))
                  plt.yticks(y_label_values,['%.1f%% (%.1f%% , %d)' % (n_reads/float(N_ALIGNED)*100,n_reads/float(N_MIXED_HDR_NHEJ)*100, n_reads) for n_reads in y_label_values])
                  # plt.xticks(np.arange(0,len_amplicon,max(3,(len_amplicon/6) - (len_amplicon/6)%5)).astype(int) )
                  plt.xticks(np.linspace(1,len_amplicon,6).astype(int) )  # SKW from arange->linspace
