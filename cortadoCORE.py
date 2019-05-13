@@ -302,10 +302,11 @@ def classify_read (row,substitution_positions,insertion_positions_flat,deletion_
     for i in range(len(ref_donor_diffs)):
         if ref_donor_diffs[i] in substitution_positions \
         and args.expected_hdr_amplicon_seq[ref_donor_diffs[i]] == row.align_seq[ref_donor_diffs[i]+row.read_offset]:
-            count_edits+=1
             if args.main_site == i:
                 HDR = True
-            hdr_vector[i]+=1
+            if not NHEJ:
+                hdr_vector[i]+=1
+                count_edits+=1
 
     # if the number of hdr sites is the total expected, increment counter
     if count_edits == last:
@@ -395,7 +396,6 @@ def process_df_chunk(df_needle_alignment_chunk):
                      for p in re_find_substitutions.finditer(row.align_str):
                          st,en=p.span()
                          if args.expected_hdr_amplicon_seq:
-                             #print "DONOR: %s READ %s" % (row.aln_donor_seq[st:en],row.align_seq[st:en])
                              #if row.aln_donor_seq[st:en] == row.align_seq[st:en]:
                              substitution_positions.append(row.ref_positions[st:en])
                          else: 
@@ -856,7 +856,8 @@ def main():
                  raise NTException('The amplicon sequence contains wrong characters:%s' % ' '.join(wrong_nt))
 
              len_amplicon=len(args.amplicon_seq)
-             hdr_vector=np.zeros(50)
+             #hdr_vector=np.zeros(5)
+             hdr_vector=np.zeros(50) #HERE is what I changed for mohan's data
 
              if args.guide_seq:
                      cut_points=[]
@@ -1543,6 +1544,7 @@ def main():
              N_MIXED_HDR_NHEJ=df_needle_alignment['MIXED'].sum()
              N_REPAIRED=df_needle_alignment['HDR'].sum()
              N_CUTSUBS=df_needle_alignment['CUTSUB'].sum()
+             #import pdb; pdb.set_trace()
 
              #disable known division warning
              with np.errstate(divide='ignore',invalid='ignore'):
@@ -2306,6 +2308,7 @@ def main():
                  fh_summary.write('All_HDR_Pos_Edited\tAll_Edit%\n')
              fh_outfile.write('All_HDR_Pos_Edited\tAll_Edit%\n')
 
+             # SUMMARIZE
              old_denominator = float(N_INDELS + N_UNMODIFIED + N_CUTSUBS)
              percent_indel = 100*(N_INDELS / float(N_ALIGNED))
              percent_subs = 100*(N_CUTSUBS / float(N_ALIGNED))
