@@ -7,7 +7,7 @@ use Getopt::Long;
 my $help = 0;
 my $threads = 30;
 my $window_size = 6;   
-my $cortado_path = `which cortado.py`;
+my $cortado_path = `which cortado_one_dir.py`;
 chomp($cortado_path);
 
 GetOptions ("t=i" => \$threads,    # numeric
@@ -17,14 +17,14 @@ GetOptions ("t=i" => \$threads,    # numeric
             "f=s" => \$fastq_path,
             "h"   => \$help,
             "help"  => \$help,
-)    or die("USAGE: perl convert_manifest.pl [-w number] [-t number_of_threads] -f /path/to/fastq/directory  <manifest text file>\n");
+)    or die("USAGE: perl convert_manifest.pl [-w number] [-t number_of_threads] [-f /path/to/fastqs]  <manifest text file>\n");
 
-if (!$fastq_path) { 
+if (!$fastq_path) {
     die("-f option is required. Please supply the path to the fastq directory");
 }
 
 if ($help || !@ARGV) {
-    print "USAGE: perl convert_manifest.pl -f /path/to/fastq/directory [options] <manifest text file>\n";
+    print "USAGE: perl convert_manifest.pl [options] <manifest text file>\n";
     print "\tOPTIONS:\n";
     print "\t-h\tThis message\n";
     print "\t-t int\tNumber of threads to use (runs in batches)\n";
@@ -43,6 +43,11 @@ while (<>) {
     my ($samp,$ref,$refseq,$donorseq,$main_site,$guideseq) = split(/\t/);
     my $name = $samp."_".$ref;
     if ($ref =~ /\s/) { die("No spaces allowed in reference names."); }
+    if (length($refseq) > 600) {
+	$r = substr($refseq,0,300);
+	$refseq = $r;
+	$name .= "_long_target";
+    }
 
     $guideseq = uc($guideseq);
     $refseq = uc($refseq);
@@ -57,20 +62,7 @@ while (<>) {
     
     $samp .= "_";
     if ($donorseq eq "-") { # Run as just NHEJ
-        print "/usr/bin/python $cortado_path -r1 $fastq_path/$samp\*R1\*.fastq.gz -r2 $fastq_path/$samp\*R2\*.fastq.gz -o output -n $name -a $refseq -g $guideseq --trim_sequences  --keep_intermediate  --min_identity_score 58 --window_around_sgrna $window_size  --min_frequency_alleles_around_cut_to_plot 0.1 --max_rows_alleles_around_cut_to_plot 250";
-	if ($count < $threads) {
-		print " & \n";
-		$count++
-	} else {
-		print "  \n";
-		$count = 0;
-	}
-    } else { # Run as HDR
-        if (length($refseq) != length($donorseq)) { 
-		#die("Sample $name: reference and donor sequences must be same length.\n$refseq\n$donorseq\n"); 
-		print("ERROR:Sample $name: reference and donor sequences must be same length.\nERROR:$refseq\nERROR:$donorseq\n"); next;
-	}
-        print "/usr/bin/python $cortado_path -r1 $fastq_path/$samp\*R1\*.fastq.gz -r2 $fastq_path/$samp\*R2\*.fastq.gz -o output -n $name -a $refseq -e $donorseq -g $guideseq --trim_sequences --keep_intermediate --all_edits --main_site $main_site --min_identity_score 58 --window_around_sgrna $window_size --min_frequency_alleles_around_cut_to_plot 0.1 --max_rows_alleles_around_cut_to_plot 250 ";
+        print "/usr/bin/python $cortado_path -r1 $fastq_path/$samp\*R1\*.fastq.gz  -o output -n $name -a $refseq -g $guideseq --trim_sequences  --keep_intermediate  --min_identity_score 58 --window_around_sgrna $window_size  --min_frequency_alleles_around_cut_to_plot 0.1 --max_rows_alleles_around_cut_to_plot 250";
 	if ($count < $threads) {
 		print " & \n";
 		$count++

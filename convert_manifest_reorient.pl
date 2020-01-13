@@ -3,11 +3,13 @@
 #use warnings;
 use Getopt::Long;
 
+# This script converts an analysis manifest into cortado commands using the version of cortado 
+# that reorients the reads to all be in the same direction matching the reference sequence.
 
 my $help = 0;
 my $threads = 30;
 my $window_size = 6;   
-my $cortado_path = `which cortado.py`;
+my $cortado_path = `which cortado_one_dir.py`;
 chomp($cortado_path);
 
 GetOptions ("t=i" => \$threads,    # numeric
@@ -17,14 +19,14 @@ GetOptions ("t=i" => \$threads,    # numeric
             "f=s" => \$fastq_path,
             "h"   => \$help,
             "help"  => \$help,
-)    or die("USAGE: perl convert_manifest.pl [-w number] [-t number_of_threads] -f /path/to/fastq/directory  <manifest text file>\n");
+)    or die("USAGE: perl convert_manifest.pl [-w number] [-t number_of_threads] [-f /path/to/fastqs]  <manifest text file>\n");
 
-if (!$fastq_path) { 
+if (!$fastq_path) {
     die("-f option is required. Please supply the path to the fastq directory");
 }
 
 if ($help || !@ARGV) {
-    print "USAGE: perl convert_manifest.pl -f /path/to/fastq/directory [options] <manifest text file>\n";
+    print "USAGE: perl convert_manifest.pl [options] <manifest text file>\n";
     print "\tOPTIONS:\n";
     print "\t-h\tThis message\n";
     print "\t-t int\tNumber of threads to use (runs in batches)\n";
@@ -34,16 +36,21 @@ if ($help || !@ARGV) {
 }
 
 my $count = 0;
+$orig_window_size = $window_size;
 while (<>) {
     if (/^#/ || /Ref_name/) { next; }
     chomp;
     my (@cols) = split(/\t/);
-    if (scalar(@cols) != 6)  { die("Manifest must have 6 columns"); }
-
-    my ($samp,$ref,$refseq,$donorseq,$main_site,$guideseq) = split(/\t/);
+    if (scalar(@cols) < 6 || scalar(@cols) > 7)  { die("Manifest must have 6 or 7 columns"); }
+    if ($cols[6] > 0) {
+        ($samp,$ref,$refseq,$donorseq,$main_site,$guideseq,$window) = split(/\t/);
+	$window_size = $window;
+    } else {
+        ($samp,$ref,$refseq,$donorseq,$main_site,$guideseq) = split(/\t/);
+	$window_size = $orig_window_size;
+    }
     my $name = $samp."_".$ref;
     if ($ref =~ /\s/) { die("No spaces allowed in reference names."); }
-
     $guideseq = uc($guideseq);
     $refseq = uc($refseq);
     if ($refseq !~ /$guideseq/) {

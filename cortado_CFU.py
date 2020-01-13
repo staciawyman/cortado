@@ -229,6 +229,9 @@ from Bio import SeqIO,pairwise2
 
 
 ###EXCEPTIONS############################
+class ReorientException(Exception):
+    pass
+
 class FlashException(Exception):
     pass
 
@@ -1125,11 +1128,23 @@ def main():
                      flash_not_combined_2_filename=_jp('out.notCombined_2.fastq.gz')
     
                      processed_output_filename=_jp('out.extendedFrags.fastq.gz')
-
+                     #================= reorient =========================================
+                     # Reorient all the reads in the same dir
+                     oriented_output_filename=_jp('out.oriented.fastq.gz')
+                     cmd='reorient.pl %s %s %s' %\
+                     (processed_output_filename,
+                      args.amplicon_seq,
+                      oriented_output_filename)
+                     info(cmd)
+                     REORIENT_STATUS=sb.call(cmd,shell=True)
+                     if REORIENT_STATUS:
+                         raise ReorientException('Reorient failed to run, please check the log file.')
+                     processed_output_filename=oriented_output_filename
+                     #exit()
+                     #================= reorient =========================================
                  #count reads
                  N_READS_INPUT=get_n_reads_fastq(args.fastq_r1)
                  N_READS_AFTER_PREPROCESSING=get_n_reads_fastq(processed_output_filename)
-                 print("processed output filesnmae: %s %d" % (processed_output_filename,N_READS_AFTER_PREPROCESSING))
                  if N_READS_AFTER_PREPROCESSING < 1000:			#SKW less than 1K, no sensitivity
                      raise NoReadsAfterQualityFiltering('NOT ENOUGH READS: Less than 1K reads in input (or that survived quality filtering).')
                  #write statistics
@@ -1745,8 +1760,6 @@ def main():
              ###############################################################################################################################################
 
 
-             ###############################################################################################################################################
-
              #(3) a graph of frequency of deletions and insertions of various sizes (deletions could be consider as negative numbers and insertions as positive);
 
 
@@ -2216,6 +2229,8 @@ def main():
                       offset_to_plot = distance_to_end - 5
                  else:
                       offset_to_plot = 75
+                 # For CFU's make it offset of 30 to reach the het snp
+                 offset_to_plot = 20
                  print('Printing from %d %d %d' % (offset_to_plot,len_amplicon,cut_point))
                  df_allele_around_cut=get_dataframe_around_cut(df_alleles, cut_point, offset_to_plot)
                  #df_allele_around_cut=get_dataframe_around_cut(df_alleles, cut_point,args.offset_around_cut_to_plot)
@@ -2285,14 +2300,14 @@ def main():
              ref_donor_diffs=[i for i in xrange(len(args.expected_hdr_amplicon_seq)) if args.expected_hdr_amplicon_seq[i] != args.amplicon_seq[i]]
              filename=os.path.join(os.path.abspath(args.output_folder),args.name,'summary_of_editing_frequency.txt')
              fh_outfile = open(filename,"w")
-             fh_outfile.write('Sample\tTotalReads\tAlignedReads\tPercentAligned\tUnmodified\t%Unmodified\tCutsiteSubs\tNon-cutsiteSubs\t%CutsiteSubs\tNHEJ\t%NHEJ\t')
+             fh_outfile.write('Sample\tTotalReads\tMergedReads\tPercentMerged\tAlignedReads\tPercentAligned\tUnmodified\t%Unmodified\tCutsiteSubs\tNon-cutsiteSubs\t%CutsiteSubs\tNHEJ\t%NHEJ\t')
              if os.path.isfile('outputsummary.txt'):
                  fh_summary = open('outputsummary.txt',"a")
                  append = True
              else:
                  fh_summary = open('outputsummary.txt',"w")
                  append = False
-                 fh_summary.write('Sample\tTotalReads\tAlignedReads\tPercentAligned\tUnmodified\t%Unmodified\tCutsiteSubs\tNon-cutsiteSubs\t%CutsiteSubs\tNHEJ\t%NHEJ\t')
+                 fh_summary.write('Sample\tTotalReads\tMergedReads\tPercentMerged\tAlignedReads\tPercentAligned\tUnmodified\t%Unmodified\tCutsiteSubs\tNon-cutsiteSubs\t%CutsiteSubs\tNHEJ\t%NHEJ\t')
              l_ref_donor = len(ref_donor_diffs);
              for i in range(len(ref_donor_diffs)):
                  if not args.main_site == i:
@@ -2314,9 +2329,12 @@ def main():
              percent_indel = 100*(N_INDELS / float(N_ALIGNED))
              percent_subs = 100*(N_CUTSUBS / float(N_ALIGNED))
              percent_unmod = 100*(N_UNMODIFIED / float(N_ALIGNED))
-             percent_aligned = 100 * (N_ALIGNED/N_READS_INPUT)
-             fh_outfile.write('%s\t%d\t%d\t%.3f\t%d\t%.3f\t%d\t%d\t%.3f\t%d\t%.3f'  % (args.name,N_READS_INPUT,N_ALIGNED,percent_aligned,N_UNMODIFIED,percent_unmod,N_CUTSUBS,seq_error,percent_subs,N_INDELS,percent_indel))
-             fh_summary.write('%s\t%d\t%d\t%.3f\t%d\t%.3f\t%d\t%d\t%.3f\t%d\t%.3f'  % (args.name,N_READS_INPUT,N_ALIGNED,percent_aligned,N_UNMODIFIED,percent_unmod,N_CUTSUBS,seq_error,percent_subs,N_INDELS,percent_indel))
+             # percent_aligned = 100 * (N_ALIGNED/float(N_READS_INPUT)) change to aligned over total merged
+             percent_aligned = 100 * (N_ALIGNED / float(N_READS_AFTER_PREPROCESSING))
+             percent_merged =  100 * (N_READS_AFTER_PREPROCESSING / float(N_READS_INPUT))
+             
+             fh_outfile.write('%s\t%d\t%d\t%.3f\t%d\t%.3f\t%d\t%.3f\t%d\t%d\t%.3f\t%d\t%.3f'  % (args.name,N_READS_INPUT,N_READS_AFTER_PREPROCESSING,percent_merged,N_ALIGNED,percent_aligned,N_UNMODIFIED,percent_unmod,N_CUTSUBS,seq_error,percent_subs,N_INDELS,percent_indel))
+             fh_summary.write('%s\t%d\t%d\t%.3f\t%d\t%.3f\t%d\t%.3f\t%d\t%d\t%.3f\t%d\t%.3f'  % (args.name,N_READS_INPUT,N_READS_AFTER_PREPROCESSING,percent_merged,N_ALIGNED,percent_aligned,N_UNMODIFIED,percent_unmod,N_CUTSUBS,seq_error,percent_subs,N_INDELS,percent_indel))
 
              if args.expected_hdr_amplicon_seq:
                  last = len(ref_donor_diffs)
@@ -2447,6 +2465,9 @@ def main():
     except TrimmomaticException as e:
          error('Trimming error, please check your input.\n\nERROR: %s' % e)
          sys.exit(4)
+    except ReorientException as e:
+         error('Reorienting error.\n\nERROR: %s' % e)
+         sys.exit(5)
     except FlashException as e:
          error('Merging error, please check your input.\n\nERROR: %s' % e)
          sys.exit(5)
