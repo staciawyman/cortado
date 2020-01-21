@@ -109,9 +109,5 @@ Running manifest.sh creates a directory called "output" where the cortado output
 ![sample_output](https://github.com/staciawyman/cortado/blob/master/sample_output.png)
 
 ## ERROR CHECKING:
-Sometimes there are errors in the input manifest and it causes of one of the instances of cortado to fail. I've found the best way to check for these is to grep for "ERROR" in the log file:
-
-`grep -i err output/*/cor*`
-
-If you get no results from that command, then you're good. Some common errors include the guide not being found in the reference sequence or the donor sequence not being the same length as the reference sequence. The first place to look to start debugging is the log file in the output/<sample_name>/cortado_running_log.txt directory for the failed sample.
+Errors are output interleaved with the rest of the output.  Some common errors include not getting enough sequence reads to analyze the sample (<1K reads). Errors in the manifest will be output when trying to convert it. Those usually are that the guide is not found in the reference sequence or the donor sequence is not the same length as the reference sequence. The first place to look to start debugging is the log file in the output/<sample_name>/cortado_running_log.txt directory for the failed sample.
 
