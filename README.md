@@ -83,25 +83,28 @@ Then the manifest.sh file is executed to run the cortado commands. I recommend r
 ## OUTPUT: 
 A summary file called "output_summary.txt" is produced with output for one sample per line in the directory that cortado is called from. If you rerun manifest.sh, you should first delete this file or the new results will be concatenated onto the old. I usually copy the output_summary.txt file contents into the Excel manifest workbook to return to the experimenter. 
 
-The output file has the following columns:
+The output summary file has the following columns:
 
-	-Total reads
-	-Aligned reads
-	-PercentAligned	
+	-Total reads - number of reads in the input fastq files
+        NOTE: the next two columns are coming in the next version of cortado.
+        -Merged reads - cortado reorients reads to all be in the same direction to simplify alignment. This is based on a subsequence of nucleotides at the 5'. 
+        -Percent merged - If there happen to be a lot of errors at that at the 5' end of the read, or the reference sequence doesn't start at the primer (extra sequence in the reference), then the percent merged might be low and you should review your reference sequence to make sure it is correct.
+	-Aligned reads - this is used as the denominator for %NHEJ and %HDR.
+	-PercentAligned	- this should be very high (>90) and if it is not, there may be a problem with your sequencing data or reference sequence.
 	-Unmodified reads	
 	-%Unmodified	
-	-CutsiteSubs	
+	-CutsiteSubs - SNP within the cut site window (6bp by default) are not counted as indels and thus are just recorded here but do not affect editing outcome percents. If this number is very large, then it may be that your sample has a SNP at the cut site or there were PCR errors at the cut site.
 	-%CutsiteSubs	
-	-NHEJ-number of reads with insertion or deletion occurring withing 3bp to either side of cutsite (windowsize can be changed by user)	
+	-NHEJ-number of reads with insertion or deletion occurring withing 3bp to either side of cutsite (with default windowsize of 6bp, windowsize can be changed by user)	
 	-%NHEJ (NHEJ reads/aligned reads)
-	-MainSite-reads edited at the primary site	
+	-MainSite-reads edited at the primary site (given by number in the analysis manifest)	
 	-Main% (MainSite reads/aligned reads)	
 	-EditSiteN-number of reads with this site edited	
 	-Edit% (EditSiteN reads/aligned reads)	
 	-All_HDR_Pos-number of reads where all possible sites are edited	
 	-All_Edit% (All_HDR_Pos/aligned reads)
 
-Running manifest.sh also creates a directory called "output" where the cortado output files for each run are placed for each sample in its own directory. Here you can find many helpful file if a sample failed to run. You can also find a pdf image of the aligned alleles with indels and SNPs marked. This is called "9.Alleles_around_cut_site_for_<sample_name>.pdf." Note that there is a bug in this representation that shows the allele from the forward read alignment and reverse read alignment (of the same allele) separately. The abundance should be summed for these two.
+Running manifest.sh creates a directory called "output" where the cortado output files for each run are placed for each sample in its own directory. Here you can find many helpful file if a sample failed to run. You can also find a pdf image of the aligned alleles with indels and SNPs marked. This is called "9.Alleles_around_cut_site_for_<sample_name>.pdf." Note that there is a bug in this representation that shows the allele from the forward read alignment and reverse read alignment (of the same allele) separately. The abundance should be summed for these two. NOTE: if you use convert_manifest_reorient.pl instead of convert_manifest.pl,this will fix this.
 
 ![sample_output](https://github.com/staciawyman/cortado/blob/master/sample_output.png)
 
