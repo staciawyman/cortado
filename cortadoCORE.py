@@ -52,6 +52,16 @@ def check_library(library_name):
                 error('You need to install %s module to use cortado.' % library_name)
                 sys.exit(1)
 
+def output_error(msg):
+         if os.path.isfile('outputsummary.txt'):
+             fh_summary = open('outputsummary.txt',"a")
+             append = True
+         else:
+             fh_summary = open('outputsummary.txt',"w")
+             append = False
+         fh_summary.write("%s: %s\n" % (args.name,msg))
+         fh_summary.close()
+
 def which(program):
         import os
         def is_exe(fpath):
@@ -2436,44 +2446,58 @@ def main():
 
 
     except NTException as e:
+         output_error(e)
          error('NTException Alphabet error, please check your input.\n\nERROR: %s' % e)
          sys.exit(1)
     except SgRNASequenceException as e:
+         output_error(e)
          error('SgRNASeqeuenceException sgRNA error, please check your input.\n\nERROR: %s' % e)
          sys.exit(2)
     except DonorSequenceException as e:
+         output_error(e)
          error('Problem with the expected hdr amplicon sequence parameter, please check your input.\n\nERROR: %s' % e)
          sys.exit(3)
     except TrimmomaticException as e:
+         output_error(e)
          error('Trimming error, please check your input.\n\nERROR: %s' % e)
          sys.exit(4)
     except FlashException as e:
+         output_error(e)
          error('Merging error, please check your input.\n\nERROR: %s' % e)
          sys.exit(5)
     except NeedleException as e:
+         output_error(e)
          error('Alignment error, please check your input.\n\nERROR: %s' % e)
          sys.exit(6)
     except NoReadsAlignedException as e:
+         output_error(e)
          error('Alignment error, please check your input.\n\nERROR: %s' % e)
          sys.exit(7)
     except AmpliconEqualDonorException as e:
-          error('Problem with the expected hdr amplicon sequence parameter, please check your input.\n\nERROR: %s' % e)
-          sys.exit(8)
+         output_error(e)
+         error('Problem with the expected hdr amplicon sequence parameter, please check your input.\n\nERROR: %s' % e)
+         sys.exit(8)
     except CoreDonorSequenceNotContainedException as e:
+         output_error(e)
          error('Donor sequence error, please check your input.\n\nERROR: %s' % e)
          sys.exit(9)
     except CoreDonorSequenceNotUniqueException as e:
+         output_error(e)
          error('Donor sequence error, please check your input.\n\nERROR: %s' % e)
          sys.exit(10)
     except ExonSequenceException as e:
+         output_error(e)
          error('Coding sequence error, please check your input.\n\nERROR: %s' % e)
          sys.exit(11)
     except DuplicateSequenceIdException as e:
+         output_error(e)
          error('Fastq file error, please check your input.\n\nERROR: %s' % e)
          sys.exit(12)
     except NoReadsAfterQualityFiltering as e:
-        error('Filtering error, please check your input.\n\nERROR: %s' % e)
-        sys.exit(13)
+         output_error(e)
+         error('Filtering error, please check your input.\n\nERROR: %s' % e)
+         sys.exit(13)
     except Exception as e:
+         output_error(e)
          error('%s Unknown :-( error, please check your input.\n\nERROR: %s' % (args.name,e))
          sys.exit(-1)
