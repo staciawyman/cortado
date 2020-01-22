@@ -59,7 +59,8 @@ def output_error(msg):
          else:
              fh_summary = open('outputsummary.txt',"w")
              append = False
-         fh_summary.write("%s: %s\n" % (args.name,msg))
+             fh_summary.write('Sample\tTotalReads\tMergedReads\tPercentMerged\tAlignedReads\tPercentAligned\tUnmodified\t%Unmodified\tCutsiteSubs\tNon-cutsiteSubs\t%CutsiteSubs\tNHEJ\t%NHEJ\n')
+         fh_summary.write("%s: ERROR: %s\n" % (args.name,msg))
          fh_summary.close()
 
 
@@ -1158,7 +1159,8 @@ def main():
                  N_READS_AFTER_PREPROCESSING=get_n_reads_fastq(processed_output_filename)
                  print("processed output filesnmae: %s %d" % (processed_output_filename,N_READS_AFTER_PREPROCESSING))
                  if N_READS_AFTER_PREPROCESSING < 1000:			#SKW less than 1K, no sensitivity
-                     raise NoReadsAfterQualityFiltering('NOT ENOUGH READS: Less than 1K reads in input (or that survived quality filtering).')
+                     err_str = 'NOT ENOUGH READS: {0} in fastq, {1} after reorienting'.format(N_READS_INPUT,N_READS_AFTER_PREPROCESSING)
+                     raise NoReadsAfterQualityFiltering(err_str)
                  #write statistics
                  #with open(_jp('Mapping_statistics.txt'),'w+') as outfile:
                  #    outfile.write('READS IN INPUTS:%d\nREADS AFTER PREPROCESSING:%d\nREADS ALIGNED:%d' % (N_READS_INPUT,N_READS_AFTER_PREPROCESSING,N_ALIGNED))
