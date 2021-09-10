@@ -47,9 +47,9 @@ A sample manifest is created by the experimenter (that edited the samples) with 
 
 The manifest can be created in Excel by the experimenter and then copied into a text file in the directory where the editing outcomes will be analyzed. 
 
-The manifest text file is given as input to the convert_manifest.pl script which creates a shell script of cortado commands. If you keep all your fastq files in the same directory, you can set that in the script, but otherwise you can add it to the command line.
+The manifest text file is given as input to the convert_manifest_reorient.pl script which creates a shell script of cortado commands. If you keep all your fastq files in the same directory, you can set that in the script, but otherwise you can add it to the command line.
 
-	`perl convert_manifest.pl [options] manifest.txt > manifest.sh`
+	`perl convert_manifest_reorient.pl [options] manifest.txt > manifest.sh`
 
 ###	OPTIONS:
 
