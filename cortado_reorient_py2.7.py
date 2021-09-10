@@ -21,7 +21,8 @@ import re
 import gzip
 from collections import defaultdict
 import multiprocessing as mp
-import cPickle as cp
+import pickle as cp
+#import cPickle as cp
 import unicodedata
 
 
@@ -58,10 +59,11 @@ def output_error(msg):
              append = True
          else:
              fh_summary = open('outputsummary.txt',"w")
-             fh_summary.write('Sample\tTotalReads\tAlignedReads\tPercentAligned\tUnmodified\t%Unmodified\tCutsiteSubs\tNon-cutsiteSubs\t%CutsiteSubs\tNHEJ\t%NHEJ\n')
              append = False
-         fh_summary.write("%s:ERROR: %s\n" % (args.name,msg))
+             fh_summary.write('Sample\tTotalReads\tMergedReads\tPercentMerged\tAlignedReads\tPercentAligned\tUnmodified\t%Unmodified\tCutsiteSubs\tNon-cutsiteSubs\t%CutsiteSubs\tNHEJ\t%NHEJ\n')
+         fh_summary.write("%s: ERROR: %s\n" % (args.name,msg))
          fh_summary.close()
+
 
 def which(program):
         import os
@@ -240,6 +242,9 @@ from Bio import SeqIO,pairwise2
 
 
 ###EXCEPTIONS############################
+class ReorientException(Exception):
+    pass
+
 class FlashException(Exception):
     pass
 
@@ -514,9 +519,12 @@ def add_hist(hist_to_add,hist_global):
 
 def slugify(value): #adapted from the Django project
 
-    value = unicodedata.normalize('NFKD', unicode(value)).encode('ascii', 'ignore')
-    value = unicode(re.sub('[^\w\s-]', '_', value).strip())
-    value = unicode(re.sub('[-\s]+', '-', value))
+    print("causing error " + value);
+    #value = unicodedata.normalize('NFKD', unicode(value)).encode('ascii', 'ignore')
+    #value = unicode(re.sub('[-\s]+', '-', value))
+    value = unicodedata.normalize('NFKD', value)
+    value = str(re.sub('[^\w\s-]', '_', value).strip())
+    value = str(re.sub('[^\w\s-]', '_', value).strip())
 
     return str(value)
 
@@ -767,23 +775,23 @@ def plot_alleles_table(offset_to_plot,reference_seq,cut_point,df_alleles,sgRNA_n
     plt.savefig(_jp('9.Alleles_around_cut_site_for_%s.pdf' % args.name),bbox_inches='tight')
     if args.save_also_png:
         plt.savefig(_jp('9.Alleles_around_cut_site_for_%s.png' % args.name),bbox_inches='tight',pad=1)
-    print 'Plot 9 Done\n'
+    print('Plot 9 Done\n')
 # END FIG 9
 
 
 def main():
     try:
-             print '  \n~~~cortado~~~'
-             print '-Analysis of CRISPR/Cas9 outcomes from deep sequencing data-'
-             print 'Reimplemented from CRISPResso Version 1.0.8\n'
-             print'''
+             print('  \n~~~cortado~~~')
+             print('-Analysis of CRISPR/Cas9 outcomes from deep sequencing data-')
+             print('Reimplemented from CRISPResso Version 1.0.8\n')
+             print('''
                       ))
                      ((
                       ))
                     _____
                  C\|~~~~~|
                     \___/
-             '''
+             ''')
              #print'\n[Luca Pinello 2015, send bugs, suggestions or *green coffee* to lucapinello AT gmail DOT com]\n\n',
 
              #global variables for the multiprocessing
@@ -1137,7 +1145,20 @@ def main():
                      flash_not_combined_2_filename=_jp('out.notCombined_2.fastq.gz')
     
                      processed_output_filename=_jp('out.extendedFrags.fastq.gz')
-
+                     #================= reorient =========================================
+                     # Reorient all the reads in the same dir
+                     oriented_output_filename=_jp('out.oriented.fastq.gz')
+                     cmd='reorient.pl %s %s %s' %\
+                     (processed_output_filename,
+                      args.amplicon_seq,
+                      oriented_output_filename)
+                     info(cmd)
+                     REORIENT_STATUS=sb.call(cmd,shell=True)
+                     if REORIENT_STATUS:
+                         raise ReorientException('Reorient failed to run, please check the log file.')
+                     processed_output_filename=oriented_output_filename
+                     #exit()
+                     #================= reorient =========================================
                  #count reads
                  N_READS_INPUT=get_n_reads_fastq(args.fastq_r1)
                  N_READS_AFTER_PREPROCESSING=get_n_reads_fastq(processed_output_filename)
@@ -1171,8 +1192,8 @@ def main():
                  needle_data=[]
 
                  try:
-                     needle_infile=gzip.open(needle_filename)
-                     line=needle_infile.readline()
+                     needle_infile = gzip.open(needle_filename,'rt')
+                     line = needle_infile.readline()
                      while line:
                          while line and ('# Aligned_sequences' not  in line):
                              line=needle_infile.readline()
@@ -1252,10 +1273,12 @@ def main():
                     N_TOTAL_ALSO_UNALIGNED=df_database_and_repair.shape[0]*1.0
 
                     #find reads that failed to align and try on the reverse complement
-                    sr_not_aligned=df_database_and_repair.ix[(df_database_and_repair.score_ref <args.min_identity_score)\
+                    #sr_not_aligned=df_database_and_repair.ix[(df_database_and_repair.score_ref <args.min_identity_score)\
+                    sr_not_aligned=df_database_and_repair.loc[(df_database_and_repair.score_ref <args.min_identity_score)\
                                       & (df_database_and_repair.score_ref< args.min_identity_score)]\
                                      .align_seq.apply(lambda x: x.replace('_',''))
 
+                    print("did we get HERE???????????")
                     #filter out not aligned reads
                     df_database_and_repair=\
                     df_database_and_repair.ix[\
@@ -1758,8 +1781,6 @@ def main():
              ###############################################################################################################################################
 
 
-             ###############################################################################################################################################
-
              #(3) a graph of frequency of deletions and insertions of various sizes (deletions could be consider as negative numbers and insertions as positive);
 
 
@@ -2222,16 +2243,15 @@ def main():
              for sgRNA,cut_point in zip(sgRNA_sequences,cut_points):
                  #print sgRNA,cut_point
                  len_amplicon = len(args.amplicon_seq)
-                 # OFFSET WINDOW CHANGE HERE
                  #offset_to_plot = (min(len_amplicon - cut_point,cut_point)) - 20
                  distance_to_end = min(len_amplicon - cut_point,cut_point)
                  if distance_to_end < 75:
                       offset_to_plot = distance_to_end - 5
                  else:
                       offset_to_plot = 75
-                 # CHANGE PLOT WINDOW HERE
-                 #offset_to_plot = 96
                  
+                 # OFFSET WINDOW CHANGE HERE
+                 # offset_to_plot = 37;
                  print('Printing from %d %d %d' % (offset_to_plot,len_amplicon,cut_point))
                  df_allele_around_cut=get_dataframe_around_cut(df_alleles, cut_point, offset_to_plot)
                  #df_allele_around_cut=get_dataframe_around_cut(df_alleles, cut_point,args.offset_around_cut_to_plot)
@@ -2301,24 +2321,27 @@ def main():
              ref_donor_diffs=[i for i in xrange(len(args.expected_hdr_amplicon_seq)) if args.expected_hdr_amplicon_seq[i] != args.amplicon_seq[i]]
              filename=os.path.join(os.path.abspath(args.output_folder),args.name,'summary_of_editing_frequency.txt')
              fh_outfile = open(filename,"w")
-             fh_outfile.write('Sample\tTotalReads\tAlignedReads\tPercentAligned\tUnmodified\t%Unmodified\tCutsiteSubs\tNon-cutsiteSubs\t%CutsiteSubs\tNHEJ\t%NHEJ\t')
+             fh_outfile.write('Sample\tTotalReads\tMergedReads\tPercentMerged\tAlignedReads\tPercentAligned\tUnmodified\t%Unmodified\tCutsiteSubs\tNon-cutsiteSubs\t%CutsiteSubs\tNHEJ\t%NHEJ\t')
+
+#-------------------------------------
              if os.path.isfile('outputsummary.txt'):
                  fh_summary = open('outputsummary.txt',"a")
                  append = True
              else:
                  fh_summary = open('outputsummary.txt',"w")
                  append = False
-                 fh_summary.write('Sample\tTotalReads\tAlignedReads\tPercentAligned\tUnmodified\t%Unmodified\tCutsiteSubs\tNon-cutsiteSubs\t%CutsiteSubs\tNHEJ\t%NHEJ\t')
+                 fh_summary.write('Sample\tTotalReads\tMergedReads\tPercentMerged\tAlignedReads\tPercentAligned\tUnmodified\t%Unmodified\tCutsiteSubs\tNon-cutsiteSubs\t%CutsiteSubs\tNHEJ\t%NHEJ\t')
+
              l_ref_donor = len(ref_donor_diffs);
              for i in range(len(ref_donor_diffs)):
                  if not args.main_site == i:
                      if not append:
-                         fh_summary.write('EditSite%d\tEdit%%\t' % (i+1) )
-                     fh_outfile.write('EditSite%d\tEdit%%\t' % (i+1) )
+                         fh_summary.write('Edit Site %d\tEdit %%\t' % (i+1) )
+                     fh_outfile.write('Edit Site %d\tEdit %%\t' % (i+1) )
                  else: 
                      if not append:
-                         fh_summary.write('MainSite\tMain%\t' )
-                     fh_outfile.write('MainSite\tMain%\t' )
+                         fh_summary.write('Main HDR Site\tMain %\t' )
+                     fh_outfile.write('Main HDR Site\tMain %\t' )
              if not append and (len(ref_donor_diffs) == 0):
                  fh_summary.write('\n')
              elif not append: 
@@ -2330,9 +2353,12 @@ def main():
              percent_indel = 100*(N_INDELS / float(N_ALIGNED))
              percent_subs = 100*(N_CUTSUBS / float(N_ALIGNED))
              percent_unmod = 100*(N_UNMODIFIED / float(N_ALIGNED))
-             percent_aligned = 100 * (N_ALIGNED/N_READS_INPUT)
-             fh_outfile.write('%s\t%d\t%d\t%.3f\t%d\t%.3f\t%d\t%d\t%.3f\t%d\t%.3f'  % (args.name,N_READS_INPUT,N_ALIGNED,percent_aligned,N_UNMODIFIED,percent_unmod,N_CUTSUBS,seq_error,percent_subs,N_INDELS,percent_indel))
-             fh_summary.write('%s\t%d\t%d\t%.3f\t%d\t%.3f\t%d\t%d\t%.3f\t%d\t%.3f'  % (args.name,N_READS_INPUT,N_ALIGNED,percent_aligned,N_UNMODIFIED,percent_unmod,N_CUTSUBS,seq_error,percent_subs,N_INDELS,percent_indel))
+             # percent_aligned = 100 * (N_ALIGNED/float(N_READS_INPUT)) change to aligned over total merged
+             percent_aligned = 100 * (N_ALIGNED / float(N_READS_AFTER_PREPROCESSING))
+             percent_merged =  100 * (N_READS_AFTER_PREPROCESSING / float(N_READS_INPUT))
+             
+             fh_outfile.write('%s\t%d\t%d\t%.3f\t%d\t%.3f\t%d\t%.3f\t%d\t%d\t%.3f\t%d\t%.3f'  % (args.name,N_READS_INPUT,N_READS_AFTER_PREPROCESSING,percent_merged,N_ALIGNED,percent_aligned,N_UNMODIFIED,percent_unmod,N_CUTSUBS,seq_error,percent_subs,N_INDELS,percent_indel))
+             fh_summary.write('%s\t%d\t%d\t%.3f\t%d\t%.3f\t%d\t%.3f\t%d\t%d\t%.3f\t%d\t%.3f'  % (args.name,N_READS_INPUT,N_READS_AFTER_PREPROCESSING,percent_merged,N_ALIGNED,percent_aligned,N_UNMODIFIED,percent_unmod,N_CUTSUBS,seq_error,percent_subs,N_INDELS,percent_indel))
 
              if args.expected_hdr_amplicon_seq:
                  last = len(ref_donor_diffs)
@@ -2439,14 +2465,14 @@ def main():
                      np.savez(_jp('effect_vector_substitution_HDR'),effect_vector_mutation_hdr)
 
              print('==>All Done!')
-             print'''
+             print('''
                       ))
                     ((
                       ))
                     _____
                  C\|~~~~~|
                     \___/
-                '''
+                ''')
 
              sys.exit(0)
 
@@ -2467,6 +2493,10 @@ def main():
          output_error(e)
          error('Trimming error, please check your input.\n\nERROR: %s' % e)
          sys.exit(4)
+    except ReorientException as e:
+         output_error(e)
+         error('Reorienting error.\n\nERROR: %s' % e)
+         sys.exit(5)
     except FlashException as e:
          output_error(e)
          error('Merging error, please check your input.\n\nERROR: %s' % e)

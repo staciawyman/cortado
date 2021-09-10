@@ -23,19 +23,7 @@ Needle from the EMBOSS suite: ftp://emboss.open-bio.org/pub/EMBOSS/EMBOSS-6.5.7.
 64-bit Linux executables are included in the bin directory and may work for you. Be sure to include both 
 the cortado directory and bin subdirectory to your path to use these.
 
-Cortado runs with Python version 2.7.5 and has not beed tested with others. To temporarily set your version to 2.7, create a virtual environment to run cortado:
-
-	$ conda create -n py27 python=2.7 anaconda
-
-This will prompt you to install many packages for this version of python. Then to start the virtual environment, making python2.7 your default version:
-
-	$ source activate py27
-
-To deactivate:
-
-	$ source deactivate
-
-(logging out will also deactivate your virtual environment)
+Cortado runs with Python version 3.8.2 and has not beed tested with others. 
 
 The following Python libraries must also be installed: 
 

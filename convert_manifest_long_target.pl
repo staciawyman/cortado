@@ -62,7 +62,8 @@ while (<>) {
     
     $samp .= "_";
     if ($donorseq eq "-") { # Run as just NHEJ
-        print "/usr/bin/python $cortado_path -r1 $fastq_path/$samp\*R1\*.fastq.gz  -o output -n $name -a $refseq -g $guideseq --trim_sequences  --keep_intermediate  --min_identity_score 58 --window_around_sgrna $window_size  --min_frequency_alleles_around_cut_to_plot 0.1 --max_rows_alleles_around_cut_to_plot 250";
+        print "/usr/bin/python $cortado_path -r1 $fastq_path/$samp\*R1\*.fastq.gz  -o output -n $name\_R1 -a $refseq -g $guideseq --trim_sequences  --keep_intermediate  --min_identity_score 58 --window_around_sgrna $window_size  --min_frequency_alleles_around_cut_to_plot 0.1 --max_rows_alleles_around_cut_to_plot 250 ";
+        #print "/usr/bin/python $cortado_path -r1 $fastq_path/$samp\*R2\*.fastq.gz  -o output -n $name\_R2 -a $refseq -g $guideseq --trim_sequences  --keep_intermediate  --min_identity_score 58 --window_around_sgrna $window_size  --min_frequency_alleles_around_cut_to_plot 0.1 --max_rows_alleles_around_cut_to_plot 250";
 	if ($count < $threads) {
 		print " & \n";
 		$count++

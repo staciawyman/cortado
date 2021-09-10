@@ -10,9 +10,10 @@ $refstr = $ARGV[1];
 #open my $outfile, '>:gzip', $ARGV[2] or die "Could not write to $ARGV[2]: $!";
 
 open (my $gzip_outfile, "| gzip -c > $ARGV[2]") or die "error starting gzip $!";
-
-$refstr_f = substr($refstr,15,25);
-$refstr_r = substr(revcomp($refstr),15,25);
+$start = 15;
+$end = 25;
+$refstr_f = substr($refstr,$start,$end);
+$refstr_r = substr(revcomp($refstr),$start,$end);
 $skip = 0;
 $rc = 0;
 
