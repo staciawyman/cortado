@@ -35,7 +35,7 @@ The following Python libraries must also be installed:
 	seaborn>0.7.1
 
 ## USAGE: 
-Cortado takes as input a sample manifest that has sample, reference and donor sequence, and guide information for each sample. The sequencing fastq files should all be in one directory (and given as an argument to the convert script). These should be 300bp paired-end sequencing reads.
+Cortado takes as input a sample manifest that has sample, reference (and donor sequence if HDR), and guide information for each sample. The sequencing fastq files should all be in one directory (and given as an argument to the convert script). These should be 300bp paired-end sequencing reads (though cortado also works on 150bp PE reads if the target is short enough for the reads to overlap).
 
 A sample manifest is created by the experimenter (that edited the samples) with the following format:
 
