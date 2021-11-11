@@ -23,7 +23,7 @@ Needle from the EMBOSS suite: ftp://emboss.open-bio.org/pub/EMBOSS/EMBOSS-6.5.7.
 64-bit Linux executables are included in the bin directory and may work for you. Be sure to include both 
 the cortado directory and bin subdirectory to your path to use these.
 
-Cortado runs with Python version 3.8.2 and has not beed tested with others. 
+Cortado runs with Python version 3.8.2 and above and has not beed tested with others. 
 
 The following Python libraries must also be installed: 
 
@@ -32,7 +32,6 @@ The following Python libraries must also be installed:
 	matplotlib>=1.3.1
 	biopython>=1.6.5
 	argparse>=1.3
-	seaborn>0.7.1
 
 ## USAGE: 
 Cortado takes as input a sample manifest that has sample, reference (and donor sequence if HDR), and guide information for each sample. The sequencing fastq files should all be in one directory (and given as an argument to the convert script). These should be 300bp paired-end sequencing reads (though cortado also works on 150bp PE reads if the target is short enough for the reads to overlap).
@@ -49,7 +48,7 @@ The manifest can be created in Excel by the experimenter and then copied into a 
 
 The manifest text file is given as input to the convert_manifest_reorient.pl script which creates a shell script of cortado commands. If you keep all your fastq files in the same directory, you can set that in the script, but otherwise you can add it to the command line.
 
-	`perl convert_manifest_reorient.pl [options] manifest.txt > manifest.sh`
+	`perl convert_manifest_reorient.pl -f /path/to/fastq/files [options] manifest.txt > manifest.sh`
 
 ###	OPTIONS:
 
@@ -71,28 +70,27 @@ Then the manifest.sh file is executed to run the cortado commands. I recommend r
 ## OUTPUT: 
 A summary file called "output_summary.txt" is produced with output for one sample per line in the directory that cortado is called from. If you rerun manifest.sh, you should first delete this file or the new results will be concatenated onto the old. I usually copy the output_summary.txt file contents into the Excel manifest workbook to return to the experimenter. 
 
-The output summary file has the following columns:
+The output summary (example outputsummary.txt below) file has the following columns:
 
-	-Total reads - number of reads in the input fastq files
-        NOTE: the next two columns are coming in the next version of cortado.
-        -Merged reads - cortado reorients reads to all be in the same direction to simplify alignment. This is based on a subsequence of nucleotides at the 5'. 
-        -Percent merged - If there happen to be a lot of errors at that at the 5' end of the read, or the reference sequence doesn't start at the primer (extra sequence in the reference), then the percent merged might be low and you should review your reference sequence to make sure it is correct.
-	-Aligned reads - this is used as the denominator for %NHEJ and %HDR.
+	-TotalReads - number of reads in the input fastq files
+        -MergedReads - cortado reorients reads to all be in the same direction to simplify alignment. This is based on a subsequence of nucleotides at the 5' of the reference sequence. 
+        -PercentMerged - If there happen to be a lot of errors at that at the 5' end of the read, or the reference sequence doesn't start at the primer (extra sequence in the reference), then the percent merged might be low and you should review your reference sequence to make sure it is correct.
+	-AlignedReads - this is used as the denominator for %NHEJ and %HDR.
 	-PercentAligned	- this should be very high (>90) and if it is not, there may be a problem with your sequencing data or reference sequence.
-	-Unmodified reads	
-	-%Unmodified	
+	-Unmodified _ number of unmodified reads
+	-%Unmodified - number of unmodified reads divided by the number of aligned reads
 	-CutsiteSubs - SNP within the cut site window (6bp by default) are not counted as indels and thus are just recorded here but do not affect editing outcome percents. If this number is very large, then it may be that your sample has a SNP at the cut site or there were PCR errors at the cut site.
 	-%CutsiteSubs	
-	-NHEJ-number of reads with insertion or deletion occurring withing 3bp to either side of cutsite (with default windowsize of 6bp, windowsize can be changed by user)	
-	-%NHEJ (NHEJ reads/aligned reads)
-	-MainSite-reads edited at the primary site (given by number in the analysis manifest)	
-	-Main% (MainSite reads/aligned reads)	
-	-EditSiteN-number of reads with this site edited	
-	-Edit% (EditSiteN reads/aligned reads)	
-	-All_HDR_Pos-number of reads where all possible sites are edited	
-	-All_Edit% (All_HDR_Pos/aligned reads)
+	-NHEJ - number of reads with insertion or deletion occurring withing 3bp to either side of cutsite (with default windowsize of 6bp, windowsize can be changed by user)	
+	-%NHEJ - number of NHEJ reads/aligned reads
+	-MainSite - number of reads edited at the primary site (given by number in the analysis manifest)	
+	-Main% - number of MainSite reads/aligned reads	
+	-EditSiteN - number of reads with site at N edited	
+	-Edit% - number of EditSiteN reads/aligned reads
+	-All_HDR_Pos - number of reads where all possible sites are edited	
+	-All_Edit% - number of All_HDR_Pos reads/aligned reads
 
-Running manifest.sh creates a directory called "output" where the cortado output files for each run are placed for each sample in its own directory. Here you can find many helpful file if a sample failed to run. You can also find a pdf image of the aligned alleles with indels and SNPs marked. This is called "9.Alleles_around_cut_site_for_<sample_name>.pdf." Note that there is a bug in this representation that shows the allele from the forward read alignment and reverse read alignment (of the same allele) separately. The abundance should be summed for these two. NOTE: if you use convert_manifest_reorient.pl instead of convert_manifest.pl,this will fix this.
+Running manifest.sh creates a directory called "output" where the cortado output files for each run are placed for each sample in its own directory. Here you can find many helpful files if a sample failed to run. You can also find a pdf image of the aligned alleles with indels and SNPs marked. This is called "9.Alleles_around_cut_site_for_<sample_name>.pdf." 
 
 ![sample_output](https://github.com/staciawyman/cortado/blob/master/sample_output.png)
 
