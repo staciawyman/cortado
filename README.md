@@ -94,6 +94,9 @@ Running manifest.sh creates a directory called "output" where the cortado output
 
 ![sample_output](https://github.com/staciawyman/cortado/blob/master/sample_output.png)
 
+## BASE EDITING FUNCTIONALITY:
+Cortado can be used to assess base editing, though it's a bit of a hack. If you put all the expected sites of base editing into the donor sequence with the expected nucleotide change (as though you are doing HDR), then the number of successful edits at all of those locations will be output (counted independently). You should also put a "1" in the MainSite column.
+
 ## ERROR CHECKING:
 Errors are output interleaved with the rest of the output.  Some common errors include not getting enough sequence reads to analyze the sample (<1K reads). Errors in the manifest will be output when trying to convert it. Those usually are that the guide is not found in the reference sequence or the donor sequence is not the same length as the reference sequence. The first place to look to start debugging is the log file in the output/<sample_name>/cortado_running_log.txt directory for the failed sample.
 
